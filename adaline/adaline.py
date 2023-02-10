@@ -50,25 +50,31 @@ class Adaline:
 		# Iniciando o processo de treinamento
 		while(epoch < self.max_epochs and np.abs(erro_agora - erro_anterior) > self.tolerancia):
 			
-			print(f"Peso Epoch {epoch}: {self.pesos} Erro quadratico: {np.abs(erro_agora - erro_anterior)	}")
-			self.histpeso[f"{epoch}"] = self.pesos
-			self.histerr[epoch] = np.abs(erro_agora - erro_anterior)	
+
 			
 			erro_anterior = erro_agora
 			err = 0
+			vetor_erro_acumulado = np.zeros(self.qt_cols+1)
 			#Ponderando a entrada com os pesos
 			for i in range(self.qt_rows):
 				# Realizando a soma ponderada
 				sum_ = (X[i]*self.pesos).sum()
 
 				# atualizando os pesos
-				self.pesos = self.pesos + (self.taxa_aprendizado * (label[i] - sum_) * X[i])
+				#self.pesos = self.pesos + (self.taxa_aprendizado * (label[i] - sum_) * X[i])
+				
+				vetor_erro_acumulado = vetor_erro_acumulado + ((label[i] - sum_)* X[i])
 				err = err + (label[i] - sum_)**2
 
 
+
+			# atualizando os pesos através do erro acumulado
+			self.pesos = self.pesos + (self.taxa_aprendizado * vetor_erro_acumulado)
 			erro_agora = err/self.p
 			epoch += 1
-			
+			print(f"Peso Epoch {epoch}: {self.pesos} Erro quadratico: {np.abs(erro_agora - erro_anterior)	}")
+			self.histpeso[f"{epoch}"] = self.pesos
+			self.histerr[epoch] = np.abs(erro_agora - erro_anterior)	
 
 
 
