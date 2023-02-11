@@ -28,12 +28,16 @@ class Perceptron:
 		self.qt_rows = X.shape[0]
 		total = X.size
 
+		# Iniciando o vetor de pesos aleatóriamente
 		self.pesos = np.random.rand(self.qt_cols)
 
-
+		# Iniciando o vetor de limiares
 		limiar = np.array([self.limiar_ativacao])
+		
+		# Adicionando o limiar no 1 elemento do vetor de pesos
 		self.pesos = np.hstack([limiar,self.pesos])
 
+		# Adicionando o valor -1 no inicio de todos os registros
 		X = np.hstack([-1*np.ones(self.qt_rows).reshape(-1,1),X])
 
 		#Iniciando contador de epoca
@@ -46,23 +50,27 @@ class Perceptron:
 		while(erro and epoch < self.max_epochs):
 			print(f"Peso Epoch {epoch}: {self.pesos}")
 			self.histpeso[f"{epoch}"] = self.pesos	
-					
+
+			# Erro, a príncipio, inexiste	
 			erro = False 
 			#Ponderando a entrada com os pesos
 			for i in range(self.qt_rows):
-				sum = (X[i]*self.pesos).sum()
+				u = (X[i]*self.pesos).sum()
 
 				# Enviando para  a função de ativação
-				y = self.FuncaoAtivacao(sum)
+				y = self.FuncaoAtivacao(u)
 
 				#Comparando o resultado gerado pelo neuronio com o original
 				if(y != label[i]):
+					
+					#Erro ainda existe
 					erro = True
+					
 					# Atualizando os pesos conforme a regra da Hebb
-
 					self.pesos =self.pesos + (self.taxa_apendizado*(label[i] - y) * X[i])
 
 
+			#Incrementando a época
 			epoch += 1
 
 
